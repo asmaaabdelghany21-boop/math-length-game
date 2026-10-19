@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لعبة أبطال قياس الأطوال والتحويلات 🌟</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .game-container {
+            background: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 650px;
+            padding: 30px;
+            text-align: center;
+            border: 5px solid #ff6b6b;
+            position: relative;
+        }
+        h1 {
+            color: #ff6b6b;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px #ffe3e3;
+        }
+        .score-board {
+            font-size: 1.2rem;
+            color: #4ecdc4;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .question-box {
+            background: #f7f9fc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 3px dashed #4ecdc4;
+        }
+        .question-text {
+            font-size: 1.3rem;
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .btn-option {
+            background: #ffe66d;
+            border: none;
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            color: #2d3436;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 0 #f0c419;
+        }
+        .btn-option:hover {
+            background: #ffde34;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #d4a707;
+        }
+        .btn-correct {
+            background: #2ecc71 !important;
+            color: white !important;
+            box-shadow: 0 5px 0 #27ae60 !important;
+            animation: bounce 0.5s ease;
+        }
+        .btn-wrong {
+            background: #e74c3c !important;
+            color: white !important;
+            box-shadow: 0 5px 0 #c0392b !important;
+        }
+        .feedback {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 15px;
+            min-height: 40px;
+        }
+        .correct-text { color: #2ecc71; }
+        .wrong-text { color: #e74c3c; }
+        .hidden { display: none; }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        #next-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 12px;
+            font-size: 1.2rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 5px 0 #d9534f;
+            display: none;
+            width: 100%;
+        }
+        .input-box {
+            padding: 15px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            border: 2px solid #4ecdc4;
+            width: 80%;
+            margin-bottom: 20px;
+            font-family: 'Cairo', sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container" id="capture-area">
+    <div id="start-screen">
+        <h1>🌟 أهلاً بك يا بطل الرياضيات! 🌟</h1>
+        <p style="font-size: 1.2rem; color: #2d3436; margin-bottom: 20px;">الرجاء كتابة اسم البطل للبدء في التحدي:</p>
+        <input type="text" id="student-name" class="input-box" placeholder="اكتب اسمك هنا...">
+        <br>
+        <button class="btn-option" style="background: #4ecdc4; color: white; width: 84%; box-shadow: 0 5px 0 #3b9e95;" onclick="startGame()">ابدأ التحدي 🚀</button>
+    </div>
+
+    <div id="game-screen" class="hidden">
+        <h1 id="welcome-player"></h1>
+        <div class="score-board">النقاط: <span id="score">٠</span> / <span id="total-q">٢٠</span></div>
+        <div id="game-area">
+            <div class="question-box">
+                <div id="question-text" class="question-text">جاري تحميل السؤال...</div>
+                <div class="options-grid" id="options-container"></div>
+            </div>
+            <div id="feedback" class="feedback"></div>
+            <button id="next-btn" onclick="nextQuestion()">السؤال التالي 🚀</button>
+        </div>
+    </div>
+
+    <div id="result-area" class="hidden">
+        <div style="font-size: 3rem;">🏆🎉</div>
+        <h2>أحسنت يا بطل! أنهيت التحدي بنجاح!</h2>
+        <p id="final-score" style="font-size: 1.5rem; font-weight: bold; color: #ff6b6b;"></p>
+        <p id="screenshot-status" style="color: #27ae60; font-weight: bold; font-size: 1.1rem; margin-top: 15px;"></p>
+        <br>
+        <button class="btn-option" style="background: #4ecdc4; color: white; width: 87%; box-shadow: 0 5px 0 #3b9e95;" onclick="restartGame()">إعادة اللعب مرة أخرى 🔄</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {question:"١- المسافة بين مدينتي القاهرة والإسكندرية تقاس بوحدة...؟", options:["المتر", "الكيلومتر", "السنتيمتر", "المليمتر"], correct:1},
+        {question:"٢- طول ملعب كرة القدم بالمدرسة يقاس بوحدة...؟", options:["المتر", "الكيلومتر", "السنتيمتر", "الميل"], correct:0},
+        {question:"٣- ارتفاع مئذنة المسجد المجاور يقاس بوحدة...؟", options:["الكيلومتر", "المتر", "السنتيمتر", "الديسيمتر"], correct:1},
+        {question:"٤- طول الطريق الدائري حول المدينة يقاس بوحدة...؟", options:["المتر", "الكيلومتر", "السنتيمتر", "الديسيمتر"], correct:1},
+        {question:"٥- ارتفاع العمارة السكنية التي تسكن بها يقاس بوحدة...؟", options:["الكيلومتر", "المتر", "السنتيمتر", "المليمتر"], correct:1},
+        {question:"٦- كم يساوي ٤ كيلومتر بالمتر؟", options:["٤٠٠ متر", "٤٠٠٠ متر", "٤٠ متر", "٤٥٠٠ متر"], correct:1},
+        {question:"٧- حوّل إلى متر: ٩ كم = ... متر؟", options:["٩٠٠ متر", "٩٠٠٠ متر", "٩٠ متر", "٩٥٠٠ متر"], correct:1},
+        {question:"٨- حوّل إلى متر: ٧ كم = ... متر؟", options:["٧٠٠ متر", "٧٠٠٠ متر", "٧٠ متر", "٧٥٠٠ متر"], correct:1},
+        {question:"٩- حوّل إلى كيلومتر: ٥٠٠٠ م = ... كم؟", options:["٥ كم", "٥٠ كم", "٥٠٠ كم", "٥٥ كم"], correct:0},
+        {question:"١٠- حوّل إلى كيلومتر: ٨٠٠٠ م = ... كم؟", options:["٨ كم", "٨٠ كم", "٨٠٠ كم", "٨٥ كم"], correct:0},
+        {question:"١١- فكّك الأطوال التالية: ٥٣٠٠ م = ... كم و ... م؟", options:["٥ كم و ٣٠٠ م", "٣ كم و ٥٠٠ م", "٥ كم و ٣٠ م", "٥٠ كم و ٣ م"], correct:0},
+        {question:"١٢- فكّك الأطوال التالية: ٤٢٠٠ م = ... كم و ... م؟", options:["٤ كم و ٢٠٠ م", "٢ كم و ٤٠٠ م", "٤ كم و ٢٠ م", "٤٠ كم و ٢ م"], correct:0},
+        {question:"١٣- فكّك الأطوال التالية: ٣٤٠٠ م = ... كم و ... م؟", options:["٣ كم و ٤٠٠ م", "٤ كم و ٣٠٠ م", "٣ كم و ٤٠ م", "٣٤ كم و ٠ م"], correct:0},
+        {question:"١٤- ضع علامة مناسبة: ٥ كم [ ] ٥٠٠٠ متر؟", options:["أكبر من", "أصغر من", "يساوي", "غير ذلك"], correct:2},
+        {question:"١٥- ضع علامة مناسبة: ٧٠٠٠ م [ ] ٨ كم؟", options:["أكبر من", "أصغر من", "يساوي", "غير ذلك"], correct:1},
+        {question:"١٦- ضع علامة مناسبة: ٤ كم [ ] ٣٩٠٠ متر؟", options:["أكبر من", "أصغر من", "يساوي", "غير ذلك"], correct:0},
+        {question:"١٧- حوّل إلى متر: ٣ كم و ٢٠٠ متر = ... متر؟", options:["٣٢٠٠ متر", "٣٠٢٠ متر", "٢٣٠٠ متر", "٣٥٠٠ متر"], correct:0},
+        {question:"١٨- مسألة أحمد: قطع ٣ كم و ٤٠٠ م بالدراجة، ثم مشى ٦٠٠ م، فما إجمالي المسافة بالمتر؟", options:["٣٤٠٠ متر", "٤٠٠٠ متر", "٣٦٠٠ متر", "٤٥٠٠ متر"], correct:1},
+        {question:"١٩- أي الأطوال التالية هو الأكبر؟", options:["٥ كم", "٤٥٠٠ متر", "٦ كم و ١٠٠ م", "٣٠٠٠ متر"], correct:2},
+        {question:"٢٠- أي الأطوال التالية هو الأصغر؟", options:["٧ كم و ٥٠٠ م", "٨٠٠٠ متر", "٧٢٠٠ متر", "٩ كم"], correct:2}
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let playerName = "";
+    const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+
+    function toArabicNum(n) {
+        return n.toString().split('').map(c => arabicNumbers[c] || c).join('');
+    }
+
+    function startGame() {
+        const nameInput = document.getElementById('student-name').value.trim();
+        if(nameInput === "") {
+            alert("الرجاء إدخال اسم البطل أولاً!");
+            return;
+        }
+        playerName = nameInput;
+        document.getElementById('welcome-player').innerText = `مرحباً بك يا بطلنا: ${playerName} 🌟`;
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-text').innerText = q.question;
+        document.getElementById('score').innerText = toArabicNum(score);
+        document.getElementById('total-q').innerText = toArabicNum(questions.length);
+        
+        const c = document.getElementById('options-container');
+        c.innerHTML = '';
+        q.options.forEach((opt, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn-option';
+            b.innerText = opt;
+            b.onclick = () => checkAnswer(i, b);
+            c.appendChild(b);
+        });
+        document.getElementById('feedback').innerText = '';
+        document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function checkAnswer(idx, btnElement) {
+        const q = questions[currentQuestionIndex];
+        const btns = document.querySelectorAll('.btn-option');
+        btns.forEach(b => b.disabled = true);
+        const f = document.getElementById('feedback');
+
+        if(idx === q.correct) {
+            score++;
+            btnElement.classList.add('btn-correct');
+            f.innerHTML = "🎉 إجابة صحيحة يا بطل! مبروك 🎉";
+            f.className = "feedback correct-text";
+        } else {
+            btnElement.classList.add('btn-wrong');
+            f.innerHTML = `❌ إجابة خاطئة! الإجابة الصحيحة هي: ${q.options[q.correct]}`;
+            f.className = "feedback wrong-text";
+            btns[q.correct].classList.add('btn-correct');
+        }
+        document.getElementById('score').innerText = toArabicNum(score);
+
+        if(currentQuestionIndex < questions.length - 1) {
+            document.getElementById('next-btn').style.display = 'block';
+        } else {
+            setTimeout(showResult, 1500);
+        }
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        loadQuestion();
+    }
+
+    function showResult() {
+        document.getElementById('game-screen').classList.add('hidden');
+        document.getElementById('result-area').classList.remove('hidden');
+        const scoreText = `البطل: ${playerName}\nحصلت على ${toArabicNum(score)} من ${toArabicNum(questions.length)} - ممتاز وبطل متميز! 🌟`;
+        document.getElementById('final-score').innerText = scoreText;
+
+        // التقاط صورة الشاشة تلقائياً وحفظها بالاسم والدرجة
+        html2canvas(document.getElementById("capture-area")).then(canvas => {
+            let link = document.createElement('a');
+            link.download = `نتيجة_البطل_${playerName}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            document.getElementById('screenshot-status').innerText = "📷 تم التقاط وحفظ صورة النتيجة (الاسم والدرجة) على جهازك تلقائياً!";
+        });
+    }
+
+    function restartGame() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById('screenshot-status').innerText = "";
+        document.getElementById('result-area').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        loadQuestion();
+    }
+</script>
+
+</body>
+</html>
