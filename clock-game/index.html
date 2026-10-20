@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لعبة الرياضيات والساعة التفاعلية للأطفال</title>
+<style>
+*{box-sizing:border-box}body{font-family:'Comic Sans MS',Arial,sans-serif;background:linear-gradient(135deg,#fbc531 0%,#ff9f43 100%);margin:0;padding:20px;display:flex;justify-content:center;align-items:center;min-height:100vh}.game-container{background:#fff;border-radius:30px;box-shadow:0 15px 35px #0003;width:100%;max-width:700px;padding:30px;text-align:center;border:6px solid #e84118;position:relative}h1{color:#e84118;font-size:26px;margin:0 0 5px}h2{color:#0097e6;font-size:20px;margin:0 0 20px}.hero-card{background:#f5f6fa;border:3px dashed #718093;border-radius:20px;padding:20px;margin-bottom:20px}.hero-input{padding:12px 20px;font-size:20px;border-radius:50px;border:3px solid #0097e6;width:min(100%,430px);text-align:center;outline:none;margin-top:10px}.btn{background:#4cd137;border:0;padding:12px 35px;font-size:20px;font-weight:bold;color:white;border-radius:50px;cursor:pointer;box-shadow:0 5px 15px #0002;transition:.2s;margin-top:15px}.btn:hover{transform:scale(1.04);background:#44bd32}.question-box{font-size:20px;color:#2f3640;margin-bottom:15px;font-weight:bold;background:#f1f2f6;padding:15px;border-radius:20px;border-right:8px solid #0097e6}.clock-visual{width:190px;height:190px;border:5px solid #2f3640;border-radius:50%;margin:0 auto 15px;position:relative;background:#fdfbf7;box-shadow:0 5px 15px #0002}.clock-number{position:absolute;font-size:15px;font-weight:bold;color:#2f3640;width:20px;height:20px;text-align:center;line-height:20px}.num-12{top:8px;left:50%;transform:translateX(-50%)}.num-1{top:18px;left:74%}.num-2{top:42px;left:91%}.num-3{top:50%;right:10px;transform:translateY(-50%)}.num-4{bottom:42px;left:91%}.num-5{bottom:18px;left:74%}.num-6{bottom:8px;left:50%;transform:translateX(-50%)}.num-7{bottom:18px;left:23%}.num-8{bottom:42px;left:7%}.num-9{top:50%;left:10px;transform:translateY(-50%)}.num-10{top:42px;left:7%}.num-11{top:18px;left:23%}.minute-tick{position:absolute;width:2px;height:6px;background:#c23616;top:50%;left:50%;transform-origin:0 0}.clock-center{width:12px;height:12px;background:#2f3640;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5}.hand{position:absolute;bottom:50%;left:50%;transform-origin:bottom;border-radius:4px}.hour-hand{width:5px;height:45px;background:#0097e6;z-index:3}.minute-hand{width:3px;height:68px;background:#e84118;z-index:4}.options-list{list-style:none;padding:0}.option-item{background:#f5f6fa;margin:10px 0;padding:12px;border-radius:15px;font-size:18px;cursor:pointer;transition:.2s;border:2px solid #dcdde1;font-weight:bold;color:#2f3640}.option-item:hover{background:#dcdde1}.correct{background:#4cd137!important;color:#fff!important;border-color:#44bd32!important}.incorrect{background:#e84118!important;color:#fff!important;border-color:#c23616!important}.hidden{display:none}.confetti{position:fixed;width:12px;height:12px;animation:fall 2s linear infinite;z-index:999;border-radius:50%}@keyframes fall{0%{transform:translateY(-100vh) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(360deg);opacity:0}}@media(max-width:520px){body{padding:10px}.game-container{padding:20px 14px;border-width:4px}h1{font-size:22px}.question-box{font-size:18px}.hero-input{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="game-container">
+<div id="welcomeScreen">
+<h1>🌟 لعبة الرياضيات والساعة التفاعلية للأطفال 🌟</h1>
+<h2>الصف الثاني الابتدائي</h2>
+<div class="hero-card"><label style="font-size:18px;font-weight:bold;color:#2f3640">بطاقة بيانات البطل / البطلة الصغيرة</label><br><input type="text" id="studentName" class="hero-input" placeholder="اكتب اسمك هنا يا بطل..." autocomplete="off"></div>
+<button class="btn" onclick="startTheGame()">ابدأ اللعبة 🚀</button>
+</div>
+<div id="questionScreen" class="hidden">
+<h3 id="progressText" style="color:#e84118;font-size:18px"></h3>
+<div id="clockContainer" class="hidden"><div class="clock-visual" id="clockFace"><span class="clock-number num-12">١٢</span><span class="clock-number num-1">١</span><span class="clock-number num-2">٢</span><span class="clock-number num-3">٣</span><span class="clock-number num-4">٤</span><span class="clock-number num-5">٥</span><span class="clock-number num-6">٦</span><span class="clock-number num-7">٧</span><span class="clock-number num-8">٨</span><span class="clock-number num-9">٩</span><span class="clock-number num-10">١٠</span><span class="clock-number num-11">١١</span><div class="clock-center"></div><div id="hourHand" class="hand hour-hand"></div><div id="minuteHand" class="hand minute-hand"></div></div></div>
+<div class="question-box" id="questionText"></div><ul class="options-list" id="optionsList"></ul><button class="btn hidden" id="nextBtn" onclick="nextQuestion()" style="background:#0097e6">السؤال التالي ➡️</button>
+</div>
+<div id="resultScreen" class="hidden">
+<h1>🎉 مبروك يا بطل أتممت اللعبة بنجاح! 🎉</h1><h2 id="finalGreeting" style="color:#2f3640"></h2>
+<div style="background:#f5f6fa;border:3px dashed #fbc531;padding:20px;border-radius:20px;margin:15px 0"><p style="font-size:22px;font-weight:bold">الدرجة النهائية المستحقة: <span id="finalScore" style="color:#4cd137"></span> / ٢٠</p><p style="font-size:18px;color:#e84118;font-weight:bold">التقدير: ممتاز مرتفع مع مرتبة الشرف الأولى 🌟</p></div>
+<p style="font-size:15px;color:#718093;font-weight:bold">خُذ لقطة شاشة لهذه الصفحة وأرسلها لمعلم المادة عبر المنصة التعليمية.</p><button class="btn" onclick="location.reload()" style="background:#9b59b6">العب مرة أخرى 🔄</button>
+</div>
+</div>
+<script>
+window.onload=function(){const face=document.getElementById('clockFace');for(let i=0;i<60;i++){if(i%5!==0){const tick=document.createElement('div');tick.className='minute-tick';tick.style.transform=`rotate(${i*6}deg) translateY(-82px)`;face.appendChild(tick)}}};
+const questions=[
+{q:'السؤال ١: ما الوقت الذي تشير إليه الساعة عندما يستقر عقرب الساعات على ٧ وعقرب الدقائق على ١٢؟',options:['السابعة تماماً','السابعة إلا النصف','الثانية عشرة'],correct:0,hourDeg:210,minDeg:0},
+{q:'السؤال ٢: عندما يشير عقرب الساعات بين ٤ و٥ وعقرب الدقائق إلى ٦، فإن الوقت يكون:',options:['الرابعة تماماً','الرابعة والنصف','الخامسة والنصف'],correct:1,hourDeg:135,minDeg:180},
+{q:'السؤال ٣: إذا كانت الساعة تشير إلى ٥:٠٠، فكم يكون الوقت بعد ١٥ دقيقة؟',options:['الخامسة والربع','الخامسة والنصف','السادسة تماماً'],correct:0,hourDeg:150,minDeg:0},
+{q:'السؤال ٤: إذا بدأت الحصة الساعة ٣:٠٠ وانتهت الساعة ٣:٣٠، فما مدة الحصة؟',options:['١٠ دقائق','٣٠ دقيقة','١٥ دقيقة'],correct:1,hourDeg:90,minDeg:0},
+{q:'السؤال ٥: اليوم الكامل يحتوي على كم ساعة؟',options:['١٢ ساعة','٢٤ ساعة','٦٠ ساعة'],correct:1},
+{q:'السؤال ٦: الذهاب إلى النوم في الليل يُعبّر عنه بوقت:',options:['صباحاً','مساءً','ظهراً'],correct:1},
+{q:'السؤال ٧: الوقت المكوّن من ٧٥ دقيقة يمكن كتابته بطريقة أخرى كـ:',options:['ساعة واحدة و١٥ دقيقة','ساعة واحدة و٥٠ دقيقة','ساعتان كاملتان'],correct:0},
+{q:'السؤال ٨: الساعة الواحدة تحتوي على كم دقيقة؟',options:['٣٠ دقيقة','٦٠ دقيقة','١٠٠ دقيقة'],correct:1},
+{q:'السؤال ٩: أوجد حاصل الجمع التالي: ١٩ + ٢٢ = ؟',options:['٤١','٥١','٣٣'],correct:0},
+{q:'السؤال ١٠: أوجد حاصل الجمع التالي: ٢٨ + ١٢ = ؟',options:['٢٠','٤٠','٥٠'],correct:1},
+{q:'السؤال ١١: أوجد ناتج الطرح التالي: ٨٩ - ٤٣ = ؟',options:['٣٦','٤٦','٥٦'],correct:1},
+{q:'السؤال ١٢: أوجد ناتج الطرح التالي: ٧٠ - ٥٧ = ؟',options:['١٣','٢٣','١٧'],correct:0},
+{q:'السؤال ١٣: أوجد حاصل الجمع التالي: ٤٥ + ٣٥ = ؟',options:['٧٠','٨٠','٩٠'],correct:1},
+{q:'السؤال ١٤: إذا كان لدى سارة ٥ تفاحات و٤ موزات و٣ برتقالات، فما مجموع الفواكه لديها؟',options:['١٠ فواكه','١٣ فاكهة','١٢ فاكهة'],correct:2},
+{q:'السؤال ١٥: وقف على الشجرة ٢١ عصفوراً، طار منها ١٠ عصافير، كم عصفوراً بقي؟',options:['١١ عصفوراً','٣١ عصفوراً','١٠ عصافير'],correct:0},
+{q:'السؤال ١٦: إذا كان ٨ طلاب يفضلون القراءة و٦ يفضلون الرسم، فما الهواية الأكثر تفضيلاً؟',options:['الرسم','القراءة','الهوايتان متساويتان'],correct:1},
+{q:'السؤال ١٧: إذا جمعنا ٥٠ + ٥٠، فما الناتج؟',options:['٩٠','١١٠','١٠٠'],correct:2},
+{q:'السؤال ١٨: إذا كانت كل نجمة تمثل طالبين ووجدت ٤ نجوم، فكم عدد الطلاب؟',options:['٦ طلاب','٨ طلاب','١٠ طلاب'],correct:1},
+{q:'السؤال ١٩: الاستيقاظ لصلاة الفجر والذهاب إلى المدرسة يكون في فترة:',options:['صباحاً','مساءً','منتصف الليل'],correct:0},
+{q:'السؤال ٢٠: أوجد ناتج الطرح التالي: ٩٥ - ٢٥ = ؟',options:['٧٠','٦٠','٧٥'],correct:0}
+];
+let currentQuestionIndex=0,score=0,studentName='';
+function startTheGame(){const name=document.getElementById('studentName').value.trim();if(!name){alert('من فضلك اكتب اسم البطل أو البطلة أولاً! 😊');return}studentName=name;document.getElementById('welcomeScreen').classList.add('hidden');document.getElementById('questionScreen').classList.remove('hidden');loadQuestion()}
+function loadQuestion(){const q=questions[currentQuestionIndex];document.getElementById('progressText').innerText=`السؤال (${currentQuestionIndex+1} من ٢٠)`;document.getElementById('questionText').innerText=q.q;const clock=document.getElementById('clockContainer');if(q.hourDeg!==undefined){clock.classList.remove('hidden');document.getElementById('hourHand').style.transform=`rotate(${q.hourDeg}deg)`;document.getElementById('minuteHand').style.transform=`rotate(${q.minDeg}deg)`}else clock.classList.add('hidden');const list=document.getElementById('optionsList');list.innerHTML='';q.options.forEach((option,index)=>{const li=document.createElement('li');li.className='option-item';li.innerText=option;li.onclick=()=>selectOption(index,li);list.appendChild(li)});document.getElementById('nextBtn').classList.add('hidden')}
+function selectOption(index,element){const q=questions[currentQuestionIndex],options=document.querySelectorAll('.option-item');options.forEach(option=>option.onclick=null);if(index===q.correct){element.classList.add('correct');score++;createConfetti()}else{element.classList.add('incorrect');options[q.correct].classList.add('correct')}document.getElementById('nextBtn').classList.remove('hidden')}
+function nextQuestion(){currentQuestionIndex++;if(currentQuestionIndex<questions.length)loadQuestion();else showResult()}
+function showResult(){document.getElementById('questionScreen').classList.add('hidden');document.getElementById('resultScreen').classList.remove('hidden');document.getElementById('finalGreeting').innerText=`البطل / البطلة: ${studentName} 🌟`;document.getElementById('finalScore').innerText=score}
+function createConfetti(){for(let i=0;i<35;i++){const confetti=document.createElement('div');confetti.className='confetti';confetti.style.left=Math.random()*window.innerWidth+'px';confetti.style.backgroundColor=['#e84118','#4cd137','#0097e6','#fbc531','#9b59b6'][Math.floor(Math.random()*5)];confetti.style.animationDuration=(Math.random()*1.5+1)+'s';document.body.appendChild(confetti);setTimeout(()=>confetti.remove(),2000)}}
+</script>
+</body>
+</html>
